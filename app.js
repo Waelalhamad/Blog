@@ -1,27 +1,29 @@
-const express = require("express");
+require("dotenv").config();
+const express = require("express"); //import express pacakge
 const mongoose = require("mongoose");
 const userRouter = require("./routes/userRouter");
+const authRouter = require("./routes/authRouter");
 
 const app = express();
-
-// Middlewares
 app.use(express.json());
 
-const connectionString = "mongodb://localhost:27017/blog";
+const connectionString = process.env.CONNECTION_STRING;
 
 async function dbConnect() {
   try {
     await mongoose.connect(connectionString);
-    console.log("Connected to MongoDB");
+    console.log("Connected to database");
   } catch (error) {
-    console.log("Error connecting to MongoDB:", error.message);
+    console.log(error.message);
   }
 }
 
 dbConnect();
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/auth", authRouter);
 
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
