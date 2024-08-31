@@ -2,7 +2,6 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-
 exports.singup = async (req, res) => {
   const body = req.body;
   try {
@@ -90,7 +89,7 @@ exports.resetPassword = async (req, res) => {
     if (!req.body.password || !req.body.confirmPassword) {
       return res.status(404).send({
         status: "fail",
-        message: "Password and confirm Password are required",
+        message: "Pasword and confirm Passowrd are required",
       });
     }
     if (req.body.password !== req.body.confirmPassword) {
