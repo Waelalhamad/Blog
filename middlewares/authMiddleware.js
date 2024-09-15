@@ -9,6 +9,7 @@ exports.protect = async (req, res, next) => {
     }
     const token = authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
     const user = await User.findById(decoded.id).select("+isActive");
     if (!user) {
       return res.status(401).send({ status: "fail", message: "user deleted" });
@@ -27,6 +28,7 @@ exports.protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.log(error);
     res.status(500).send({ status: "fail", message: error.message });
   }
 };

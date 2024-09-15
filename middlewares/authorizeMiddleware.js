@@ -3,7 +3,7 @@ exports.allow = (...roles) => {
     if (!roles.includes(req.user.role)) {
       return res.status(401).send({
         status: "fail",
-        message: "You are not allowed to acces this route",
+        message: "You are not allowed to access this route",
       });
     }
 

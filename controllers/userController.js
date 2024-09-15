@@ -1,71 +1,66 @@
 const User = require("../models/user");
-
-exports.getAllUsers = async (req, res) => {
+const userSerivce = require("../services/userService");
+exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await userSerivce.getAllUsers();
     res
       .status(200)
       .send({ status: "success", result: users.length, data: users });
   } catch (error) {
-    res.status(500).send({ status: "fail", message: error.message });
+    next(error);
   }
 };
 
-exports.addUser = async (req, res) => {
+exports.addUser = async (req, res, next) => {
   try {
-    const user = await User.create(req.body);
+    const user = await userSerivce.createUser(req.body);
     res.status(201).send({ status: "success", data: user });
   } catch (error) {
-    res.status(500).send({ status: "fail", message: error.message });
+    next(error);
   }
 };
 
-exports.updateUser = async (req, res) => {
+exports.updateUser = async (req, res, next) => {
   const id = req.params.id;
   const updatedData = req.body;
+  const appUser = req.user;
   try {
-    const user = await User.findByIdAndUpdate(id, updatedData, {
-      new: true,
-    });
-    if (!user) {
-      return res
-        .status(404)
-        .send({ status: "fail", message: "User not found!" });
-    }
+    const user = await userSerivce.updateUser(appUser, id, updatedData);
+
     return res.status(200).send({ status: "success", data: user });
   } catch (error) {
-    return res.status(500).send({ status: "fail", message: error.message });
+    next(error);
   }
 };
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return res
-        .status(404)
-        .send({ status: "fail", message: "User not found!" });
-    }
+    await userSerivce.deleteUser(id);
     return res
       .status(200)
       .send({ status: "success", message: "User delteted successfully!" });
   } catch (error) {
-    return res.status(500).send({ status: "fail", message: error.message });
+    next(error);
   }
 };
 
-exports.getUserById = async (req, res) => {
+exports.getUserById = async (req, res, next) => {
   const id = req.params.id;
   try {
-    const user = await User.findById(id);
-    if (!user) {
-      return res
-        .status(404)
-        .send({ status: "fail", message: "User not found!" });
-    }
+    const user = await userSerivce.getUserById(id);
+
     return res.status(200).send({ status: "success", data: user });
   } catch (error) {
-    return res.status(500).send({ status: "fail", message: error.message });
+    next(error);
+  }
+};
+exports.getUserDetails = async (req, res, next) => {
+  const id = req.params.id || req.user._id;
+  try {
+    const user = await userSerivce.getUserDetails(id);
+    return res.status(200).send({ status: "success", data: user });
+  } catch (error) {
+    next(error);
   }
 };
